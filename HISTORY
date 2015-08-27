@@ -1,0 +1,12 @@
+The initial commit of this project comes from an old tarball I'd saved named
+nhss-20080713.tar.gz which was made by Ian Kilgore of iank.org.
+
+I reached out to him in Aug. 2015 and he responded thus:
+
+"Great that you have a tarball, I think I lost the code a long time ago. 
+Feel free to do what you want with it (consider it public domain or WTFPL, 
+or whatever)"
+
+With this in consideration I've elected to release it and my small
+modifications under the MIT license. The first commit from this repository
+can be considered under WTFPL/public domain as well.
