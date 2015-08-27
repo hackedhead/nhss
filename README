@@ -1,0 +1,32 @@
+NetHack Sokoban Solver
+
+Sokoban, in nethack, is an optional set of levels which resemble the puzzle game sokoban.  You push boulders into pits, so you can walk to the next staircase.  Unfortunately, there's no magic reset button, so you only get one shot.
+
+nhss creates a nethack-like environment, which will read in the level from a file, and allow the user to attempt to solve it, without messing up the game.  It also records the user's moves each attempt, for replay after solving.
+
+Useful?  Yep.
+Cheating?  Only if you're completely rabid.
+
+Part of why nethack is so cool (and hard) is that there is no capability to reload old savegames (well, there is, if you cp them out of the savedir before you start nethack, but that /is/ cheating =).  Using a program like nhss to figure out sokoban (resetting a few times in the process) before trying it in nethack is, in essence, reloading an old savegame.
+
+On the other hand, there is no random element in the sokoban levels.  Using nhss is like writing it down on paper, but more convenient.  I personally don't consider it cheating.  
+
+Usage:
+nhss levelfile recfile
+
+levelfile is a file containing a nethack level like the one shown below, and recfile the filename which nhss should place recorded moves.
+
+Example level:
+------  -----
+|....|  |...|
+|.`..----.`.|
+|.`......`..|
+|..---@---`.|
+|---------.---
+|..^^^<|.....|
+|..----|`....|
+--^|   |.`...|
+ |^-----.`...|
+ |..^^^^`.`..|
+ |..----------
+ ----

@@ -1,0 +1,3 @@
+Silently truncates lines over 80 characters long (counting newline)
+
+The status line ("Bad direction key") won't be displayed if the number of lines in the level equals or exceeds the number of lines on the screen.

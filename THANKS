@@ -1,0 +1,10 @@
+shiver
+
+  Found and fixed a segfault caused by using 'int' instead of size_t
+
+
+jwodder
+
+  Made various improvements, including scrubbing of unrecognized symbols,
+  adding the -O option, removing the need to specify a recfile, and writting a
+  manpage
