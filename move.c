@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 #include "nhss.h"
@@ -25,7 +26,8 @@ int moveKey(char dir) {
 
 // diagonals are disabled here, as in sokoban they're not much use.
 // You can't move diagonally around a boulder.
-/*    case 'b':
+// We'd need to add rules in moveto to disallow moves between diag adjacent boulders and walls to enable this and have it behave correctly.
+    case 'b':
       moveto(-1, -1);
       return E_SUCCESS;
     case 'y':
@@ -37,8 +39,7 @@ int moveKey(char dir) {
       return E_SUCCESS;
     case 'u':
       moveto(1, 1);
-      return E_SUCCESS;*/
-
+      return E_SUCCESS;
 
 
     default:
@@ -47,16 +48,33 @@ int moveKey(char dir) {
   }
 }
 
+// 1 if we are attempting a diagonal move, zero else
+int isdiag(int x, int y) {
+  return (abs(x) + abs(y)) - 1; 
+}
+
+
 void moveto(int x, int y) {	// Moves the character to the position specified by the coordinates, relative to the player
   switch (RELPOS(x, y)) {
     case '.': // an empty space
-      POS = '.';	// Get rid of player at the old location
-      RELPOS(x, y) = '@'; // Move player to new location
-      info.player[0] = info.player[0] - y;  // update player location in info
-      info.player[1] = info.player[1] + x;
-    break;
+      switch (isdiag(x, y)) {
+        case 1:
+          if (!(RELPOS(x,0) == '.' || RELPOS(0,y) == '.')) {
+            break; // if we find no empty space, fall through to no move.
+          }
+        default:
+          POS = '.';	// Get rid of player at the old location
+          RELPOS(x, y) = '@'; // Move player to new location
+          info.player[0] = info.player[0] - y;  // update player location in info
+          info.player[1] = info.player[1] + x;
+        }
+      break;
     case '`': // a boulder
     case '0':
+      if (isdiag(x,y)) { 
+        statusline("Boulders will not roll diagonally on this floor");
+        break;
+      }
       POS = '.';	// get rid of player
       info.player[0] = info.player[0] - y; // update player location so we can move the boulder
       info.player[1] = info.player[1] + x;
