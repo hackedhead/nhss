@@ -1,4 +1,4 @@
-#include <curses.h>
+#include <ncurses.h>
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -53,9 +53,26 @@ int level_load(const char *filename) {
 }
 
 int level_print() {
-  int i;	// counter
+  int i,j;	// counters
   for (i=0;i<info.lines;i++) {	// loop through the array and print all the lines
-    mvaddstr(i, 0, info.level[i]);	// the newline is included in the line.
+    //mvaddstr(i, 0, info.level[i]);	// the newline is included in the line.
+    int line_len = strlen(info.level[i]);
+    for (j=0;j<line_len;j++) {
+      // print each char, add colors
+      if ( info.level[i][j] == '-' || info.level[i][j] == '|' ) {
+        attron(COLOR_PAIR(1));
+      }
+      if ( info.level[i][j] == '^' ) {
+        attron(COLOR_PAIR(2));
+      }
+      mvaddch(i, j, info.level[i][j]);	// the newline is included in the line.
+      if ( info.level[i][j] == '-' || info.level[i][j] == '|' ) {
+        attroff(COLOR_PAIR(1));
+      }
+      if ( info.level[i][j] == '^' ) {
+        attroff(COLOR_PAIR(2));
+      }
+    }
   }
   move(info.player[0], info.player[1]);
   return E_SUCCESS;

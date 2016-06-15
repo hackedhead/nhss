@@ -1,4 +1,4 @@
-#include <curses.h>
+#include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -45,6 +45,15 @@ int main(int argc, char **argv) {
   if (optind+1 < argc) recfile=argv[optind+1];
   else ret = E_SUCCESS;  /* Just to be sure the `ret==E_ERROR' below isn't triggered */
   initscr();
+  if(has_colors() == FALSE)
+  {
+    endwin();
+    printf("Your terminal does not support color\n");
+    exit(1);
+  }
+  start_color();
+  init_pair(1,COLOR_GREEN,COLOR_BLACK); // walls
+  init_pair(2,COLOR_YELLOW,COLOR_BLACK); // holes
   cbreak();
   noecho();
 

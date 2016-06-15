@@ -1,5 +1,5 @@
 nhss: nhss.c level.c move.c record.c headers
-	gcc -o nhss nhss.c level.c move.c record.c -lcurses
+	gcc -o nhss nhss.c level.c move.c record.c -lncurses
 
 headers: nhss.h level.h move.h record.h
 
