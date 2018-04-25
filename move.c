@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <ncurses.h>
 #include "nhss.h"
 #include "move.h"
+#include "record.h"
 
 extern nhss_info_t info;
 extern int boulders;
@@ -70,6 +73,13 @@ void moveto(int x, int y) {	// Moves the character to the position specified by 
       POS = '@';
       statusline("You fall through the pit to the level below and return upstairs");
       break;
+    case '<': // stairs up, we escape this level
+      statusline("You have completed this Sokoban level!");
+      refresh();
+      sleep(1);
+      endwin();
+      record_close();
+      exit(E_SUCCESS);
     case '>': // stairs down
     case '.': // an empty space
       switch (isdiag(x, y)) {
