@@ -42,7 +42,6 @@ int moveKey(char dir) {
       moveto(1, 1);
       return E_SUCCESS;
 
-
     default:
       return E_ERROR;
       break;

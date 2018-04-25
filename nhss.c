@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
         record_close();
         fprintf(stderr, "nhss: bad recording\n");
       }
-      if (getch() == 'q') {
+      if (get_input() == 'q') {
         endwin();
         record_close();
         return E_SUCCESS;
@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
     }
   }
   else {
-    while (movekey = getch()) {  // Read in a direction key
+    while (movekey = get_input()) {  // Read in a direction key
       if (movekey == 'q') {  // If the key is q, quit.
         endwin();
         record_close();  // This function /could/ return an error, but what am I going to do?  quit?  ;]
@@ -136,4 +136,63 @@ void statusline(const char *line) {
     mvaddstr(info.lines, 0, line);
   }
   move(info.player[0], info.player[1]);
+}
+
+char get_input() {
+  char res;
+  res = getch();
+  switch (res) {
+    case '\033': // Process escape sequence (arrows/numpad)
+      return interpret_escape();
+
+    case '8': // Translate numpad digits to vi-keys
+      return 'k';
+    case '2':
+      return 'j';
+    case '6':
+      return 'l';
+    case '4':
+      return 'h';
+
+    case '1':
+      return 'b';
+    case '7':
+      return 'y';
+    case '3':
+      return 'n';
+    case '9':
+      return 'u';
+
+    default: // Otherwise just return char
+      return res;
+  }
+}
+
+char interpret_escape() { //Translate arrows and numpad into vi-keys
+  if (getch() != '[') return '\0';
+  switch(getch()) {
+    case 'A': //Arrow keys/Numpad arrows
+      return 'k';
+    case 'B':
+      return 'j';
+    case 'C':
+      return 'l';
+    case 'D':
+      return 'h';
+
+    case 'H': //Numpad keys
+      return 'y';
+    case '5':
+      if (getch() != '~') return '\0';
+      return 'u';
+    case 'F':
+      return 'b';
+    case '6':
+      if (getch() != '~') return '\0';
+      return 'n';
+
+    default:
+      return '\0';
+      break;
+  }
 }
