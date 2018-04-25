@@ -7,6 +7,7 @@
 
 extern nhss_info_t info;
 extern int boulders;
+extern int fallthru;
 
 int moveKey(char dir) {
   switch (dir) {
@@ -53,9 +54,23 @@ int isdiag(int x, int y) {
   return (abs(x) + abs(y)) - 1; 
 }
 
+// 1 if we're standing on stairs down, zero else
+int isstairsdown() {
+  if (info.player[0] == info.stairs[0] && info.player[1] == info.stairs[1]) return 1;
+  return 0;
+}
 
 void moveto(int x, int y) {	// Moves the character to the position specified by the coordinates, relative to the player
   switch (RELPOS(x, y)) {
+    case '^': // walking into pit
+      if (!fallthru) break;
+      POS = isstairsdown() ? '>' : '.';
+      info.player[0] = info.stairs[0];
+      info.player[1] = info.stairs[1];
+      POS = '@';
+      statusline("You fall through the pit to the level below and return upstairs");
+      break;
+    case '>': // stairs down
     case '.': // an empty space
       switch (isdiag(x, y)) {
         case 1:
@@ -63,7 +78,7 @@ void moveto(int x, int y) {	// Moves the character to the position specified by 
             break; // if we find no empty space, fall through to no move.
           }
         default:
-          POS = '.';	// Get rid of player at the old location
+          POS = isstairsdown() ? '>' : '.';	// Get rid of player at the old location
           RELPOS(x, y) = '@'; // Move player to new location
           info.player[0] = info.player[0] - y;  // update player location in info
           info.player[1] = info.player[1] + x;

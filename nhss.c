@@ -10,12 +10,14 @@
 nhss_info_t info;
 extern int optind;
 int boulders;  /* Set to 1 if boulders are to be represented as '0's */
+int fallthru;  /* Set to 1 if you're allowed to fall through the pits and return upstairs */
 
 void usage(const char *name) {
   printf("%s: missing argument\n", name);
   printf("Usage: %s [-rO] level [record]\n\n", name);
   printf("-r: replay recfile\n");
   printf("-O: display boulders as '0'\n");
+  printf("-f: enable falling through the pits and returning upstairs\n");
   printf("level: level file, containing a nethack level\n");
   printf("record: file to hold a recording of the session\n");
 }
@@ -25,12 +27,13 @@ int main(int argc, char **argv) {
   char movekey;
   int ret,replay=0;
 
-  while ((ret = getopt(argc, argv, "rhO")) != -1) {
+  while ((ret = getopt(argc, argv, "rhOf")) != -1) {
     switch(ret) {
       case 'r':
         replay=1;
         break;
       case 'O': boulders = 1; break;
+      case 'f': fallthru = 1; break;
       case 'h':
         usage(argv[0]);
         exit(E_SUCCESS);
