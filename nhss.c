@@ -112,13 +112,13 @@ int main(int argc, char **argv) {
         record_close();  // This function /could/ return an error, but what am I going to do?  quit?  ;]
         return E_SUCCESS;
       }
+      statusline(NULL);
       ret = moveKey(movekey);
       level_print();
       if (ret == E_ERROR) {  // If the key is bad, show an error
         statusline("Bad direction key");
       }
       else {
-        statusline(NULL);
         record_add(movekey);  // If the key is valid, add it to the recording.
       }
     }
