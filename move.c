@@ -74,8 +74,8 @@ void moveto(int x, int y) {	// Moves the character to the position specified by 
     case '.': // an empty space
       switch (isdiag(x, y)) {
         case 1:
-          if (!(RELPOS(x,0) == '.' || RELPOS(0,y) == '.')) {
-            break; // if we find no empty space, fall through to no move.
+          if (!(strchr(".^", RELPOS(x,0)) || strchr(".^", RELPOS(0,y)))) {
+            break; // if we find no empty space or pit, fall through to move.
           }
         default:
           POS = isstairsdown() ? '>' : '.';	// Get rid of player at the old location
