@@ -65,6 +65,13 @@ int isstairsdown() {
 
 void moveto(int x, int y) {	// Moves the character to the position specified by the coordinates, relative to the player
   switch (RELPOS(x, y)) {
+    case '*': // reached the prize of the Sokoban
+      statusline("You have reached the prize and completed the Sokoban branch!");
+      refresh();
+      sleep(1);
+      endwin();
+      record_close();
+      exit(E_SUCCESS);
     case '^': // walking into pit
       if (!fallthru) break;
       POS = isstairsdown() ? '>' : '.';
