@@ -84,8 +84,9 @@ void moveto(int x, int y) {	// Moves the character to the position specified by 
     case '.': // an empty space
       switch (isdiag(x, y)) {
         case 1:
-          if (!(RELPOS(x,0) == '.' || RELPOS(0,y) == '.')) {
-            break; // if we find no empty space, fall through to no move.
+          if (!(strchr(".^", RELPOS(x,0)) || strchr(".^", RELPOS(0,y)))) {
+            statusline("You are carrying too much to get through");
+            break; // if we find no empty space or pit, fall through to move.
           }
         default:
           POS = isstairsdown() ? '>' : '.';	// Get rid of player at the old location
@@ -96,7 +97,7 @@ void moveto(int x, int y) {	// Moves the character to the position specified by 
       break;
     case '`': // a boulder
     case '0':
-      if (isdiag(x,y)) { 
+      if (isdiag(x,y)) {
         statusline("Boulders will not roll diagonally on this floor");
         break;
       }
