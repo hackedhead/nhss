@@ -40,7 +40,7 @@ int level_load(const char *filename) {
        return E_ERROR;
       }
       break;
-     } else if (strchr("|-+`0@.^<> ", *lp) == NULL) *lp = '.';
+     } else if (strchr("|-+`0@.^<>* ", *lp) == NULL) *lp = '.';
      else if (*lp == '0' && !boulders) *lp = '`';
      else if (*lp == '`' && boulders) *lp = '0';
     }
