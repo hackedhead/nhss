@@ -19,5 +19,7 @@ typedef struct nhss_info {
 // RELPOS == Relative Position.  Returns the character in the position specified by the coordinates, relative to the player.
 
 void statusline(const char *line);
+char get_input();
+char interpret_escape();
 
 #endif
