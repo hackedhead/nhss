@@ -168,10 +168,10 @@ char get_input() {
   }
 }
 
-char interpret_escape() { //Translate arrows and numpad into vi-keys
+char interpret_escape() { // Translate arrows and numpad into vi-keys
   if (getch() != '[') return '\0';
   switch(getch()) {
-    case 'A': //Arrow keys/Numpad arrows
+    case 'A': // Arrow keys/Numpad arrows
       return 'k';
     case 'B':
       return 'j';
@@ -180,7 +180,7 @@ char interpret_escape() { //Translate arrows and numpad into vi-keys
     case 'D':
       return 'h';
 
-    case 'H': //Numpad keys
+    case 'H': // Numpad keys
       return 'y';
     case '5':
       if (getch() != '~') return '\0';
