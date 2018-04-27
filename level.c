@@ -40,7 +40,7 @@ int level_load(const char *filename) {
        return E_ERROR;
       }
       break;
-     } else if (strchr("|-+`0@.^<> ", *lp) == NULL) *lp = '.';
+     } else if (strchr("|-+`0@.^<>* ", *lp) == NULL) *lp = '.';
      else if (*lp == '0' && !boulders) *lp = '`';
      else if (*lp == '`' && boulders) *lp = '0';
     }
@@ -88,6 +88,9 @@ int level_findplayer() {
   if (ret!=NULL) {
     info.player[0] = i-1;
     info.player[1] = ret - info.level[i-1];
+    for (i=0;i<2;i++) {
+      info.stairs[i] = info.player[i];
+    }
     return E_SUCCESS;
   }
   else {

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
 #include "nhss.h"
 
 extern nhss_info_t info;

@@ -1,12 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <ncurses.h>
 #include "nhss.h"
 #include "move.h"
+#include "record.h"
 
 extern nhss_info_t info;
 extern int boulders;
+extern int fallthru;
 
 int moveKey(char dir) {
   switch (dir) {
@@ -41,7 +45,6 @@ int moveKey(char dir) {
       moveto(1, 1);
       return E_SUCCESS;
 
-
     default:
       return E_ERROR;
       break;
@@ -53,17 +56,46 @@ int isdiag(int x, int y) {
   return (abs(x) + abs(y)) - 1; 
 }
 
+// 1 if we're standing on stairs down, zero else
+int isstairsdown() {
+  if (info.player[0] == info.stairs[0] && info.player[1] == info.stairs[1]) return 1;
+  return 0;
+}
 
 void moveto(int x, int y) {	// Moves the character to the position specified by the coordinates, relative to the player
   switch (RELPOS(x, y)) {
+    case '*': // reached the prize of the Sokoban
+      statusline("You have reached the prize and completed the Sokoban branch!");
+      refresh();
+      sleep(1);
+      endwin();
+      record_close();
+      exit(E_SUCCESS);
+    case '^': // walking into pit
+      if (!fallthru) break;
+      POS = isstairsdown() ? '>' : '.';
+      info.player[0] = info.stairs[0];
+      info.player[1] = info.stairs[1];
+      POS = '@';
+      statusline("You fall through the pit to the level below and return upstairs");
+      break;
+    case '<': // stairs up, we escape this level
+      statusline("You have completed this Sokoban level!");
+      refresh();
+      sleep(1);
+      endwin();
+      record_close();
+      exit(E_SUCCESS);
+    case '>': // stairs down
     case '.': // an empty space
       switch (isdiag(x, y)) {
         case 1:
-          if (!(RELPOS(x,0) == '.' || RELPOS(0,y) == '.')) {
-            break; // if we find no empty space, fall through to no move.
+          if (!(strchr(".^", RELPOS(x,0)) || strchr(".^", RELPOS(0,y)))) {
+            statusline("You are carrying too much to get through");
+            break; // if we find no empty space or pit, fall through to move.
           }
         default:
-          POS = '.';	// Get rid of player at the old location
+          POS = isstairsdown() ? '>' : '.';	// Get rid of player at the old location
           RELPOS(x, y) = '@'; // Move player to new location
           info.player[0] = info.player[0] - y;  // update player location in info
           info.player[1] = info.player[1] + x;
@@ -71,7 +103,7 @@ void moveto(int x, int y) {	// Moves the character to the position specified by 
       break;
     case '`': // a boulder
     case '0':
-      if (isdiag(x,y)) { 
+      if (isdiag(x,y)) {
         statusline("Boulders will not roll diagonally on this floor");
         break;
       }

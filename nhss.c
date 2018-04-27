@@ -10,12 +10,14 @@
 nhss_info_t info;
 extern int optind;
 int boulders;  /* Set to 1 if boulders are to be represented as '0's */
+int fallthru;  /* Set to 1 if you're allowed to fall through the pits and return upstairs */
 
 void usage(const char *name) {
   printf("%s: missing argument\n", name);
   printf("Usage: %s [-rO] level [record]\n\n", name);
   printf("-r: replay recfile\n");
   printf("-O: display boulders as '0'\n");
+  printf("-f: enable falling through the pits and returning upstairs\n");
   printf("level: level file, containing a nethack level\n");
   printf("record: file to hold a recording of the session\n");
 }
@@ -25,12 +27,13 @@ int main(int argc, char **argv) {
   char movekey;
   int ret,replay=0;
 
-  while ((ret = getopt(argc, argv, "rhO")) != -1) {
+  while ((ret = getopt(argc, argv, "rhOf")) != -1) {
     switch(ret) {
       case 'r':
         replay=1;
         break;
       case 'O': boulders = 1; break;
+      case 'f': fallthru = 1; break;
       case 'h':
         usage(argv[0]);
         exit(E_SUCCESS);
@@ -95,7 +98,7 @@ int main(int argc, char **argv) {
         record_close();
         fprintf(stderr, "nhss: bad recording\n");
       }
-      if (getch() == 'q') {
+      if (get_input() == 'q') {
         endwin();
         record_close();
         return E_SUCCESS;
@@ -103,19 +106,19 @@ int main(int argc, char **argv) {
     }
   }
   else {
-    while (movekey = getch()) {  // Read in a direction key
+    while (movekey = get_input()) {  // Read in a direction key
       if (movekey == 'q') {  // If the key is q, quit.
         endwin();
         record_close();  // This function /could/ return an error, but what am I going to do?  quit?  ;]
         return E_SUCCESS;
       }
+      statusline(NULL);
       ret = moveKey(movekey);
       level_print();
       if (ret == E_ERROR) {  // If the key is bad, show an error
         statusline("Bad direction key");
       }
       else {
-        statusline(NULL);
         record_add(movekey);  // If the key is valid, add it to the recording.
       }
     }
@@ -133,4 +136,63 @@ void statusline(const char *line) {
     mvaddstr(info.lines, 0, line);
   }
   move(info.player[0], info.player[1]);
+}
+
+char get_input() {
+  char res;
+  res = getch();
+  switch (res) {
+    case '\033': // Process escape sequence (arrows/numpad)
+      return interpret_escape();
+
+    case '8': // Translate numpad digits to vi-keys
+      return 'k';
+    case '2':
+      return 'j';
+    case '6':
+      return 'l';
+    case '4':
+      return 'h';
+
+    case '1':
+      return 'b';
+    case '7':
+      return 'y';
+    case '3':
+      return 'n';
+    case '9':
+      return 'u';
+
+    default: // Otherwise just return char
+      return res;
+  }
+}
+
+char interpret_escape() { // Translate arrows and numpad into vi-keys
+  if (getch() != '[') return '\0';
+  switch(getch()) {
+    case 'A': // Arrow keys/Numpad arrows
+      return 'k';
+    case 'B':
+      return 'j';
+    case 'C':
+      return 'l';
+    case 'D':
+      return 'h';
+
+    case 'H': // Numpad keys
+      return 'y';
+    case '5':
+      if (getch() != '~') return '\0';
+      return 'u';
+    case 'F':
+      return 'b';
+    case '6':
+      if (getch() != '~') return '\0';
+      return 'n';
+
+    default:
+      return '\0';
+      break;
+  }
 }

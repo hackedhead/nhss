@@ -9,6 +9,7 @@ typedef struct nhss_info {
 	unsigned int lines;	// Actual number of lines in the level
 
 	unsigned int player[2];		// Player position.  [0] == line number, [1] == index on line
+	unsigned int stairs[2];		// Start coordinates.  [0] == line number, [1] == index on line
 	FILE *recfile;		// file to record movement to
 } nhss_info_t;
 
@@ -18,5 +19,7 @@ typedef struct nhss_info {
 // RELPOS == Relative Position.  Returns the character in the position specified by the coordinates, relative to the player.
 
 void statusline(const char *line);
+char get_input();
+char interpret_escape();
 
 #endif
